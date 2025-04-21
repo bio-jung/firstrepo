@@ -1,17 +1,20 @@
 import matplotlib.pyplot as plt
 
-# 데이터
-years = [2000, 2005, 2010, 2015, 2020, 2021, 2022, 2023, 2024, 2025]
-audience = [120, 135, 160, 155, 110, 90, 100, 120, 140, 150]
+# 연도와 평균기온 데이터 (추정치 기반 예시)
+years = list(range(1980, 2025))
+# 간단한 예시: 1980년 11.5℃에서 시작해서, 점진적으로 13.5℃까지 증가한다고 가정
+temperatures = [
+    11.5 + (13.5 - 11.5) / (2024 - 1980) * (year - 1980) for year in years
+]
 
 # 그래프 그리기
-plt.figure(figsize=(10, 6))
-plt.bar(years, audience)
-plt.title('2000~2025년 클래식 음악 관람객 변화 (바 차트)', fontsize=16)
+plt.figure(figsize=(12, 6))
+plt.plot(years, temperatures, marker='o', linestyle='-', linewidth=2)
+plt.title('1980~2024년 서울특별시 연평균 기온 변화 (예시)', fontsize=18)
 plt.xlabel('연도', fontsize=14)
-plt.ylabel('관람객 수 (만 명)', fontsize=14)
-plt.grid(axis='y')  # y축에만 그리드 표시
-plt.xticks(years, rotation=45)
+plt.ylabel('연평균 기온 (℃)', fontsize=14)
+plt.grid(True)
+plt.xticks(range(1980, 2025, 5), rotation=45)
 plt.tight_layout()
 
 # 그래프 보여주기
