@@ -16,6 +16,3 @@ plt.tight_layout()
 
 # 그래프 보여주기
 plt.show()
-
-st.title("나의 첫 번째 스트림릿 사이트")
-st.write("안녕하세요~ 배미정입니다^^")
