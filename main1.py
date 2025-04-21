@@ -1,29 +1,27 @@
-import pandas as pd
+import os
+import requests
 
-data = {
-    '국가': ['대한민국', '미국', '일본', '중국', '독일', '프랑스', '영국', '인도', '호주', '브라질'],
-    '국기 이미지 URL': [
-        'https://flagcdn.com/w320/kr.png',
-        'https://flagcdn.com/w320/us.png',
-        'https://flagcdn.com/w320/jp.png',
-        'https://flagcdn.com/w320/cn.png',
-        'https://flagcdn.com/w320/de.png',
-        'https://flagcdn.com/w320/fr.png',
-        'https://flagcdn.com/w320/gb.png',
-        'https://flagcdn.com/w320/in.png',
-        'https://flagcdn.com/w320/au.png',
-        'https://flagcdn.com/w320/br.png'
-    ],
-    '수도': ['서울', '워싱턴 D.C.', '도쿄', '베이징', '베를린', '파리', '런던', '뉴델리', '캔버라', '브라질리아'],
-    '인구수': ['5,100만', '3억 3,100만', '1억 2,500만', '14억 2,000만', '8,300만', '6,700만', '6,700만', '14억 1,000만', '2,600만', '2억 1,400만']
-}
+# 저장할 폴더 생성
+download_folder = "flags"
+os.makedirs(download_folder, exist_ok=True)
 
-df = pd.DataFrame(data)
+# 다운로드할 ISO2 국가 코드 리스트 (예시로 일부만)
+country_codes = [
+    'kr', 'us', 'jp', 'cn', 'fr', 'de', 'br', 'gb', 'ru', 'it', 'es', 'in', 'ca', 'au'
+]
 
-# HTML로 변환 (Jupyter Notebook에서 이미지 표시 가능)
-from IPython.display import HTML
+# Base URL
+base_url = "https://flagcdn.com/w320/"
 
-def path_to_image_html(path):
-    return f'<img src="{path}" width="60" >'
+# 각 국가 코드에 대해 다운로드
+for code in country_codes:
+    url = f"{base_url}{code}.png"
+    response = requests.get(url)
 
-HTML(df.to_html(escape=False, formatters={'국기 이미지 URL': path_to_image_html}))
+    if response.status_code == 200:
+        file_path = os.path.join(download_folder, f"{code}.png")
+        with open(file_path, 'wb') as f:
+            f.write(response.content)
+        print(f"Downloaded: {code}.png")
+    else:
+        print(f"Failed to download: {code}.png (Status Code: {response.status_code})")
