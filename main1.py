@@ -15,7 +15,7 @@ data = {
         "캔버라", "브라질리아", "뉴델리", "멕시코시티", "모스크바",
         "리야드", "암스테르담", "스톡홀름", "오슬로", "헬싱키"
     ],
-    "국기": [
+    "국기 URL": [
         "https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg",
         "https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg",
         "https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Japan.svg",
@@ -42,14 +42,21 @@ data = {
 # 데이터프레임 생성
 df = pd.DataFrame(data)
 
-# Streamlit 애플리케이션 제목
-st.title("세계 20개국의 수도와 국기")
+st.title("🌍 세계 20개국의 수도와 국기")
 
-# 데이터프레임 표시
-st.dataframe(df)
+# 국기 이미지를 실제로 표시할 컬럼 추가
+def get_flag_image(url):
+    return f"![Flag]({url})"
 
-# 국기를 이미지로 표시
-st.write("각 국가의 국기:")
-for i in range(len(df)):
-    st.image(df["국기"][i], caption=df["국가"][i], width=100)
+df["국기"] = df["국기 URL"].apply(get_flag_image)
 
+# 필요없는 URL 컬럼 제거
+df_display = df.drop(columns=["국기 URL"])
+
+# Streamlit에 마크다운 테이블 형태로 출력
+st.markdown(
+    df_display.to_markdown(index=False),
+    unsafe_allow_html=True
+)
+
+st.caption("※ 이미지는 Streamlit 기본 테이블에 직접 삽입할 수 없기 때문에 마크다운을 이용해 표현했습니다.")
