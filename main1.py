@@ -1,33 +1,104 @@
 import streamlit as st
 
-# MBTI 유형과 설명
-mbti_types = {
-    "ISTJ": "검사자 - 신뢰성과 성실성을 중요시 여기는 유형입니다.",
-    "ISFJ": "수호자 - 타인을 배려하고 돕는 것을 즐기는 유형입니다.",
-    "INFJ": "예언자 - 깊은 통찰력과 비전으로 세계를 이해하려 하는 유형입니다.",
-    "INTJ": "구성자 - 혁신적이고 전략적인 사고를 중시하는 유형입니다.",
-    "ISTP": "장인 - 문제 해결에 뛰어난 실용적 사고를 가진 유형입니다.",
-    "ISFP": "예술가 - 창의적이고 자유로운 삶을 추구하는 유형입니다.",
-    "INFP": "중재자 - 가치와 이상을 중시하며, 창의적이고 감성적인 유형입니다.",
-    "INTP": "사색가 - 이론적이고 분석적인 경향이 있는 유형입니다.",
-    "ESTP": "활동가 - 현재 순간을 즐기고 모험을 추구하는 유형입니다.",
-    "ESFP": "연예인 - 사람들과 소통하며 즐거움을 찾는 유형입니다.",
-    "ENFP": "활력소 - 창의적이고 열정적인 아이디어를 잘 표현하는 유형입니다.",
-    "ENTP": "발명가 - 새로운 아이디어와 논쟁을 즐기는 유형입니다.",
-    "ESTJ": "관리자 - 조직적이고 실제적인 접근 방식을 중시하는 유형입니다.",
-    "ESFJ": "외교관 - 다른 사람들과의 관계를 중시하고 따뜻한 성품을 가진 유형입니다.",
-    "ENFJ": "사교가 - 사람들을 이끌고 돕는 것을 좋아하는 유형입니다.",
-    "ENTJ": "지휘관 - 목표 달성을 위해 구조와 계획을 세우는 것을 중시하는 유형입니다."
-}
+# 질문 및 답변 옵션
+questions = [
+    {
+        "question": "1. 당신은 사람들 사이에서 에너지를 얻는 편인가요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "2. 계획을 세우는 것을 좋아하나요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "3. 새로운 아이디어를 생각하는 것이 흥미로운가요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "4. 타인을 돕는 것을 좋아하나요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "5. 즉흥적인 결정을 잘 내리나요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "6. 감정보다 논리를 더 중시하나요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "7. 상황에 따라 변화를 좋아하나요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "8. 사교적인 모임을 선호하나요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "9. 종종 사람들의 감정을 고려하나요?",
+        "options": ["예", "아니오"]
+    },
+    {
+        "question": "10. 부정확한 정보를 듣고 흥미를 느끼나요?",
+        "options": ["예", "아니오"]
+    }
+]
+
+# MBTI 계산 함수
+def calculate_mbti(answers):
+    e_score = answers.count("예")
+    i_score = len(answers) - e_score
+
+    if e_score > i_score:
+        e_i = "E"  # 외향
+    else:
+        e_i = "I"  # 내향
+
+    # 각 질문의 기준에 따라 1점씩 추가
+    t_score = 0
+    f_score = 0
+    for idx, answer in enumerate(answers):
+        if idx in [5, 6]:  # T/F 기준 질문
+            if answer == "예":
+                t_score += 1
+            else:
+                f_score += 1
+
+    if t_score > f_score:
+        t_f = "T"  # 사고
+    else:
+        t_f = "F"  # 감정
+
+    j_score = 0
+    p_score = 0
+    for idx, answer in enumerate(answers):
+        if idx in [1, 3, 7]:  # J/P 기준 질문
+            if answer == "예":
+                j_score += 1
+            else:
+                p_score += 1
+
+    if j_score > p_score:
+        j_p = "J"  # 판단
+    else:
+        j_p = "P"  # 인식
+
+    return e_i + t_f + j_p
 
 # Streamlit 애플리케이션 제목
-st.title("MBTI 유형 선택기")
+st.title("MBTI 유형 검사")
 
-# MBTI 유형 선택
-mbti = st.selectbox("당신의 MBTI 유형을 선택하세요:", list(mbti_types.keys()))
+# 답변을 저장할 리스트
+answers = []
 
-# 선택된 유형의 설명 표시
-if mbti:
-    st.write(f"당신의 MBTI 유형: **{mbti}**")
-    st.write(mbti_types[mbti])
+# 질문 출력
+for question in questions:
+    answer = st.selectbox(question["question"], question["options"], key=question["question"])
+    answers.append(answer)
+
+# 제출 버튼
+if st.button("결과 확인"):
+    mbti = calculate_mbti(answers)
+    st.write(f"당신의 MBTI 유형은: **{mbti}**입니다.")
+
 
