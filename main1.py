@@ -20,46 +20,42 @@ def calculate_mbti(responses):
     for idx, answer in enumerate(responses):
         dimension = questions[idx]["dimension"]
         if dimension == "EI":
-            if answer == "예":
-                scores["E"] += 1
-            else:
-                scores["I"] += 1
+            scores["E"] += 1 if answer == "예" else scores["I"] += 1
         elif dimension == "SN":
-            if answer == "예":
-                scores["N"] += 1
-            else:
-                scores["S"] += 1
+            scores["N"] += 1 if answer == "예" else scores["S"] += 1
         elif dimension == "TF":
-            if answer == "예":
-                scores["T"] += 1
-            else:
-                scores["F"] += 1
+            scores["T"] += 1 if answer == "예" else scores["F"] += 1
         elif dimension == "JP":
-            if answer == "예":
-                scores["J"] += 1
-            else:
-                scores["P"] += 1
+            scores["J"] += 1 if answer == "예" else scores["P"] += 1
 
-    result = ""
-    result += "E" if scores["E"] >= scores["I"] else "I"
-    result += "S" if scores["S"] >= scores["N"] else "N"
-    result += "T" if scores["T"] >= scores["F"] else "F"
-    result += "J" if scores["J"] >= scores["P"] else "P"
-    return result
+    mbti = ""
+    mbti += "E" if scores["E"] >= scores["I"] else "I"
+    mbti += "S" if scores["S"] >= scores["N"] else "N"
+    mbti += "T" if scores["T"] >= scores["F"] else "F"
+    mbti += "J" if scores["J"] >= scores["P"] else "P"
+    return mbti
 
 # Streamlit 인터페이스
 st.title("🔍 MBTI 간단 검사")
 
-answers = []
+# 세션 상태를 사용해 답변을 저장
+if "answers" not in st.session_state:
+    st.session_state.answers = [""] * len(questions)
 
-st.write("아래 질문에 답변해 주세요:")
-
+# 질문 출력
 for idx, q in enumerate(questions):
-    answer = st.selectbox(q["question"], ["예", "아니오"], key=idx)
-    answers.append(answer)
+    st.session_state.answers[idx] = st.selectbox(
+        q["question"], 
+        ["", "예", "아니오"],  # 초기값으로 빈 문자열 추가!
+        index=0, 
+        key=f"q_{idx}"
+    )
 
+# 제출 버튼
 if st.button("결과 확인"):
-    mbti_type = calculate_mbti(answers)
-    st.success(f"당신의 MBTI 유형은 **{mbti_type}** 입니다!")
-
+    if "" in st.session_state.answers:
+        st.warning("모든 질문에 답변해 주세요!")
+    else:
+        mbti_type = calculate_mbti(st.session_state.answers)
+        st.success(f"당신의 MBTI 유형은 **{mbti_type}** 입니다!")
 
