@@ -1,66 +1,33 @@
-#!/usr/bin/env python3
-import sys
+import streamlit as st
 
-QUESTIONS = [
-    {"text": "1. 사교 모임에서 당신은 (A) 모르는 사람과도 적극적으로 교류한다 (B) 익숙한 사람과 주로 교류한다", "dimension": "EI", "a": "E", "b": "I"},
-    {"text": "2. 새로운 정보를 배울 때 (A) 구체적 사실과 실용적 예시를 선호한다 (B) 추상적 이론과 가능성을 선호한다", "dimension": "SN", "a": "S", "b": "N"},
-    {"text": "3. 의사결정 시 (A) 논리적 일관성을 중시한다 (B) 개인적 가치와 조화를 중시한다", "dimension": "TF", "a": "T", "b": "F"},
-    {"text": "4. 작업 방식을 선택한다면 (A) 계획적이고 조직적인 방식을 선호한다 (B) 자율적이고 유연한 방식을 선호한다", "dimension": "JP", "a": "J", "b": "P"},
-    {"text": "5. 에너지를 충전할 때 (A) 외부 활동에 참여하며 충전한다 (B) 혼자 시간을 보내며 충전한다", "dimension": "EI", "a": "E", "b": "I"},
-    {"text": "6. 설명할 때 (A) 구체적 세부사항을 중심으로 설명한다 (B) 전체적인 그림과 비유를 활용해 설명한다", "dimension": "SN", "a": "S", "b": "N"},
-    {"text": "7. 문제 해결 시 (A) 객관적 데이터와 분석을 신뢰한다 (B) 직관과 감정을 신뢰한다", "dimension": "TF", "a": "T", "b": "F"},
-    {"text": "8. 결정을 내릴 때 (A) 빠르게 결정하고 확정 짓는다 (B) 가능한 한 옵션을 열어 둔다", "dimension": "JP", "a": "J", "b": "P"},
-    {"text": "9. 대화 중 (A) 즉시 자신의 생각을 말한다 (B) 먼저 듣고 난 뒤 말한다", "dimension": "EI", "a": "E", "b": "I"},
-    {"text": "10. 문제 해결 접근 시 (A) 현재 현실을 우선 고려한다 (B) 미래 가능성을 우선 고려한다", "dimension": "SN", "a": "S", "b": "N"},
-    {"text": "11. 스트레스 상황에서 (A) 분석과 논리를 우선한다 (B) 사람들의 감정을 우선한다", "dimension": "TF", "a": "T", "b": "F"},
-    {"text": "12. 하루 일정을 (A) 일정표나 할 일 목록으로 관리한다 (B) 상황에 따라 유동적으로 대응한다", "dimension": "JP", "a": "J", "b": "P"}
-]
+# MBTI 유형과 설명
+mbti_types = {
+    "ISTJ": "검사자 - 신뢰성과 성실성을 중요시 여기는 유형입니다.",
+    "ISFJ": "수호자 - 타인을 배려하고 돕는 것을 즐기는 유형입니다.",
+    "INFJ": "예언자 - 깊은 통찰력과 비전으로 세계를 이해하려 하는 유형입니다.",
+    "INTJ": "구성자 - 혁신적이고 전략적인 사고를 중시하는 유형입니다.",
+    "ISTP": "장인 - 문제 해결에 뛰어난 실용적 사고를 가진 유형입니다.",
+    "ISFP": "예술가 - 창의적이고 자유로운 삶을 추구하는 유형입니다.",
+    "INFP": "중재자 - 가치와 이상을 중시하며, 창의적이고 감성적인 유형입니다.",
+    "INTP": "사색가 - 이론적이고 분석적인 경향이 있는 유형입니다.",
+    "ESTP": "활동가 - 현재 순간을 즐기고 모험을 추구하는 유형입니다.",
+    "ESFP": "연예인 - 사람들과 소통하며 즐거움을 찾는 유형입니다.",
+    "ENFP": "활력소 - 창의적이고 열정적인 아이디어를 잘 표현하는 유형입니다.",
+    "ENTP": "발명가 - 새로운 아이디어와 논쟁을 즐기는 유형입니다.",
+    "ESTJ": "관리자 - 조직적이고 실제적인 접근 방식을 중시하는 유형입니다.",
+    "ESFJ": "외교관 - 다른 사람들과의 관계를 중시하고 따뜻한 성품을 가진 유형입니다.",
+    "ENFJ": "사교가 - 사람들을 이끌고 돕는 것을 좋아하는 유형입니다.",
+    "ENTJ": "지휘관 - 목표 달성을 위해 구조와 계획을 세우는 것을 중시하는 유형입니다."
+}
 
-DIMENSIONS = [("E", "I"), ("S", "N"), ("T", "F"), ("J", "P")]
+# Streamlit 애플리케이션 제목
+st.title("MBTI 유형 선택기")
 
-def ask_questions():
-    scores = {"E": 0, "I": 0, "S": 0, "N": 0, "T": 0, "F": 0, "J": 0, "P": 0}
-    for q in QUESTIONS:
-        while True:
-            print(q["text"])
-            choice = input("  ▶ A/B 중 선택: ").strip().upper()
-            if choice == "A":
-                scores[q["a"]] += 1
-                print()
-                break
-            elif choice == "B":
-                scores[q["b"]] += 1
-                print()
-                break
-            else:
-                print("  잘못된 입력입니다. 'A' 또는 'B'를 입력해 주세요.\n")
-    return scores
+# MBTI 유형 선택
+mbti = st.selectbox("당신의 MBTI 유형을 선택하세요:", list(mbti_types.keys()))
 
-def determine_mbti(scores):
-    result = ""
-    for first, second in DIMENSIONS:
-        if scores[first] > scores[second]:
-            result += first
-        elif scores[second] > scores[first]:
-            result += second
-        else:
-            result += "-"
-    return result
+# 선택된 유형의 설명 표시
+if mbti:
+    st.write(f"당신의 MBTI 유형: **{mbti}**")
+    st.write(mbti_types[mbti])
 
-def main():
-    print("\n========== MBTI 간이 테스트 ==========")
-    scores = ask_questions()
-    mbti_type = determine_mbti(scores)
-
-    print("\n========== 결과 ==========")
-    if "-" in mbti_type:
-        print(f"일부 차원에서 동점이 발생했습니다. 결과: {mbti_type}")
-    else:
-        print(f"당신의 MBTI 유형은: {mbti_type}")
-    print("==============================\n")
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        sys.exit("\n테스트가 중단되었습니다. 안녕히 가세요!")
